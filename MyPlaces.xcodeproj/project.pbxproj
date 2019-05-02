@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F336D2F227627BC00DCD103 /* RatingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F336D2E227627BC00DCD103 /* RatingControl.swift */; };
+		6F336D31227B5E9B00DCD103 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F336D30227B5E9A00DCD103 /* MapViewController.swift */; };
 		6FD4324D2274B93700E91966 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4324C2274B93700E91966 /* CustomTableViewCell.swift */; };
 		6FD4324F2274BD0E00E91966 /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4324E2274BD0E00E91966 /* PlaceModel.swift */; };
 		6FD432512274C82300E91966 /* NewPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD432502274C82300E91966 /* NewPlaceViewController.swift */; };
@@ -21,6 +23,8 @@
 
 /* Begin PBXFileReference section */
 		32842D05A8E8C4845A72A9BC /* Pods-MyPlaces.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyPlaces.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyPlaces/Pods-MyPlaces.debug.xcconfig"; sourceTree = "<group>"; };
+		6F336D2E227627BC00DCD103 /* RatingControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingControl.swift; sourceTree = "<group>"; };
+		6F336D30227B5E9A00DCD103 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		6FD4324C2274B93700E91966 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		6FD4324E2274BD0E00E91966 /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
 		6FD432502274C82300E91966 /* NewPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaceViewController.swift; sourceTree = "<group>"; };
@@ -84,7 +88,9 @@
 				6FD4324E2274BD0E00E91966 /* PlaceModel.swift */,
 				6FD432522275CB1900E91966 /* StorageManager.swift */,
 				6FE425E6227492F900F33AFF /* Main.storyboard */,
+				6F336D30227B5E9A00DCD103 /* MapViewController.swift */,
 				6FD432502274C82300E91966 /* NewPlaceViewController.swift */,
+				6F336D2E227627BC00DCD103 /* RatingControl.swift */,
 				6FE425EB227492FD00F33AFF /* LaunchScreen.storyboard */,
 				6FE425EE227492FD00F33AFF /* Info.plist */,
 				6FEB83C7227603B900A83CB3 /* Assets.xcassets */,
@@ -199,7 +205,8 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-MyPlaces/Pods-MyPlaces-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-MyPlaces/Pods-MyPlaces-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Cosmos/Cosmos.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 			);
@@ -207,12 +214,13 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cosmos.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MyPlaces/Pods-MyPlaces-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MyPlaces/Pods-MyPlaces-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -222,12 +230,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F336D2F227627BC00DCD103 /* RatingControl.swift in Sources */,
 				6FD4324D2274B93700E91966 /* CustomTableViewCell.swift in Sources */,
 				6FD4324F2274BD0E00E91966 /* PlaceModel.swift in Sources */,
 				6FD432512274C82300E91966 /* NewPlaceViewController.swift in Sources */,
 				6FD432532275CB1900E91966 /* StorageManager.swift in Sources */,
 				6FE425E3227492F900F33AFF /* AppDelegate.swift in Sources */,
 				6FE425F5227496E500F33AFF /* MainViewController.swift in Sources */,
+				6F336D31227B5E9B00DCD103 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
