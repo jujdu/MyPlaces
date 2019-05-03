@@ -17,6 +17,7 @@ protocol MapViewControllerDelegate {
 
 class MapViewController: UIViewController {
     
+    @IBOutlet weak var goButton: UIButton!
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var mapPinImage: UIImageView!
@@ -25,11 +26,17 @@ class MapViewController: UIViewController {
     var mapViewControllerDelegate: MapViewControllerDelegate?
     var place = Place()
     
-    
+    var placeCoordinate: CLLocationCoordinate2D?
     let annotationIdentifier = "annotationIdentifier"
     let locationManager = CLLocationManager()
-    let regionInMeters = 10_000.0
+    let regionInMeters = 1000.0
     var incomeSegueIdentifier = ""
+    var previousLocation: CLLocation? {
+        didSet {
+            startTrackingUserLocation()
+        }
+    }
+    var directionsArray: [MKDirections] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,12 +49,22 @@ class MapViewController: UIViewController {
     
     private func setupMapView() {
         
+        goButton.isHidden = true
+        
         if incomeSegueIdentifier == "showPlace" {
             setupMapView()
             mapPinImage.isHidden = true
             doneButton.isHidden = true
             addressLabel.isHidden = true
+            goButton.isHidden = false
         }
+    }
+    
+    private func resetMapView(withNew directions: MKDirections) {
+        mapView.removeOverlays(mapView.overlays)
+        directionsArray.append(directions)
+        let _ = directionsArray.map { $0.cancel() }
+        directionsArray.removeAll()
     }
     
     private func setupPlaceMark() {
@@ -73,6 +90,7 @@ class MapViewController: UIViewController {
             guard let placeMarkLocation = placemark?.location else { return }
             
             annotation.coordinate = placeMarkLocation.coordinate
+            self.placeCoordinate = placeMarkLocation.coordinate
             
             self.mapView.showAnnotations([annotation], animated: true)
             self.mapView.selectAnnotation(annotation, animated: true)
@@ -126,6 +144,71 @@ class MapViewController: UIViewController {
         }
     }
     
+    private func startTrackingUserLocation() {
+        guard let previousLocation = previousLocation else { return }
+        let center = getCenterLocation(for: mapView)
+        guard center.distance(from: previousLocation) > 50 else { return }
+        self.previousLocation = center
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.showUserLocation()
+        }
+    }
+    
+    private func getDirections() {
+        
+        guard let location = locationManager.location?.coordinate else {
+            showAlert(title: "Error", message: "Current location is not found")
+            return }
+        
+        locationManager.startUpdatingLocation()
+        
+        previousLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        
+        guard let request = createDirectionsRequest(from: location) else {
+            showAlert(title: "Error", message: "Destination is not found")
+            return
+        }
+        
+        let directions = MKDirections(request: request)
+        resetMapView(withNew: directions)
+        
+        directions.calculate { (response, error) in
+            if let error = error {
+                print(error)
+                return
+            }
+            guard let response = response else {
+                self.showAlert(title: "Eror", message: "Direction is not available")
+                return
+            }
+            for route in response.routes {
+                self.mapView.addOverlay(route.polyline)
+                self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+                
+                let distance = String(format: "%.1f", route.distance / 1000)
+                let timeInterval = route.expectedTravelTime
+                
+                print("The distance to destination: \(distance) km")
+                print("It takes \(timeInterval) sec")
+            }
+        }
+    }
+    
+    private func createDirectionsRequest(from coordinate: CLLocationCoordinate2D) -> MKDirections.Request? {
+        guard let destinationCoordinate = placeCoordinate else { return nil }
+        let startingLocation = MKPlacemark(coordinate: coordinate)
+        let destination = MKPlacemark(coordinate: destinationCoordinate)
+        
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: startingLocation)
+        request.destination = MKMapItem(placemark: destination)
+        request.transportType = .automobile
+        request.requestsAlternateRoutes = true
+        
+        return request
+    }
+    
     private func getCenterLocation(for MapView: MKMapView) -> CLLocation {
         
         let latitude = mapView.centerCoordinate.latitude
@@ -151,6 +234,11 @@ class MapViewController: UIViewController {
     @IBAction func closeVC() {
         dismiss(animated: true)
     }
+    
+    @IBAction func goButtonPressed() {
+        
+    }
+    
     @IBAction func doneButtonPressed() {
         mapViewControllerDelegate?.getAddress(addressLabel.text)
         dismiss(animated: true)
@@ -185,6 +273,14 @@ extension MapViewController: MKMapViewDelegate {
         let center = getCenterLocation(for: mapView)
         let geocoder = CLGeocoder()
         
+        if incomeSegueIdentifier == "showPlace" && previousLocation != nil {
+            DispatchQueue.main.asyncAfter(wallDeadline: .now() + 3) {
+                self.showUserLocation()
+            }
+        }
+        
+        geocoder.cancelGeocode()
+        
         geocoder.reverseGeocodeLocation(center) { (placemarks, error) in
             if let error = error {
                 print(error)
@@ -207,6 +303,14 @@ extension MapViewController: MKMapViewDelegate {
                 }
             }
         }
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        
+        let renderer = MKPolylineRenderer(overlay: overlay as! MKPolyline)
+        renderer.strokeColor = .blue
+        
+        return renderer
     }
 }
 
